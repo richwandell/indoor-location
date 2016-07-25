@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     boolean magnetValuesSet = false;
 
     View compassContainer;
+    View homeLayoutContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
         compassContainer = findViewById(R.id.compasscontainer);
+        homeLayoutContainer = findViewById(R.id.home_layout_image);
     }
 
     @Override
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             ra.setDuration(250);
             ra.setFillAfter(true);
             compassContainer.startAnimation(ra);
+            homeLayoutContainer.startAnimation(ra);
             currentDegree = -azimuthInDegrees;
         }
     }

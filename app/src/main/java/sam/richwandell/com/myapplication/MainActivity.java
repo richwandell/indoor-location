@@ -13,10 +13,26 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
-    private Sensor sensor;
+    private Sensor accelerometer;
+    private Sensor magneticfield;
+    float[] accelValues;
+    float[] magnetValues;
+    private float[] rotationMatrix = new float[9];
+    private float[] orientationMatrix = new float[3];
+
+    private float currentDegree = 0f;
+
+    boolean accelValuesSet = false;
+    boolean magnetValuesSet = false;
+
+    View compassContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +42,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setSupportActionBar(toolbar);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED);
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        magneticfield = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        sensorManager.registerListener(this, magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -37,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         .setAction("Action", null).show();
             }
         });
+        compassContainer = findViewById(R.id.compasscontainer);
     }
 
     @Override
@@ -63,8 +82,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
-            Log.d("debug", String.valueOf(sensorEvent.values[0]) + " " + String.valueOf(sensorEvent.values[1]) + " " + String.valueOf(sensorEvent.values[2]));
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            magnetValues = sensorEvent.values;
+            magnetValuesSet = true;
+        }
+
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            accelValues = sensorEvent.values;
+            accelValuesSet = true;
+        }
+
+        if(accelValuesSet && magnetValuesSet){
+            SensorManager.getRotationMatrix(rotationMatrix, null, accelValues, magnetValues);
+            SensorManager.getOrientation(rotationMatrix, orientationMatrix);
+            float azimuthInRadians = orientationMatrix[0];
+            float azimuthInDegrees = (float)(Math.toDegrees(azimuthInRadians)+360)%360;
+            Compass.azimuthInDegrees = azimuthInDegrees;
+            RotateAnimation ra = new RotateAnimation(currentDegree, -azimuthInDegrees,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            ra.setDuration(250);
+            ra.setFillAfter(true);
+            compassContainer.startAnimation(ra);
+            currentDegree = -azimuthInDegrees;
         }
     }
 
@@ -76,16 +115,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        // register this class as a listener for the orientation and
-        // accelerometer sensors
-        sensorManager.registerListener(this,
-                sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED),
-                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     protected void onPause() {
-        // unregister listener
         super.onPause();
         sensorManager.unregisterListener(this);
     }

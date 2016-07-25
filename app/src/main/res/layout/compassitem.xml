@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/compasscontainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha="1.5">
+
+    <sam.richwandell.com.myapplication.Compass android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/circle"
+        android:layout_centerVertical="true"
+        android:id="@+id/compass"
+        android:layout_centerHorizontal="true" />
+
+    <View
+        android:id="@+id/compassblock"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="10dp"
+        android:background="@drawable/square"
+        android:layout_height="80dp" />
+
+    <View
+        android:layout_centerInParent="true"
+        android:layout_above="@id/compassblock"
+        android:layout_width="40dp"
+        android:paddingBottom="100dp"
+        android:background="@drawable/triangle"
+        android:id="@+id/compasstriangle"
+        android:layout_height="20dp" />
+
+    <TextView
+        android:layout_centerInParent="true"
+        android:layout_above="@id/compasstriangle"
+        android:layout_width="10dp"
+        android:layout_height="15dp"
+        android:text="N" />
+
+    <TextView
+        android:layout_centerInParent="true"
+        android:layout_below="@id/compassblock"
+        android:layout_width="10dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="15dp"
+        android:text="S" />
+
+    <TextView
+        android:layout_centerInParent="true"
+        android:layout_width="140dp"
+        android:layout_height="15dp"
+        android:text="W" />
+
+    <TextView
+        android:layout_centerInParent="true"
+        android:layout_width="140dp"
+        android:layout_height="15dp"
+        android:textAlignment="viewEnd"
+        android:text="E" />
+
+
+
+</RelativeLayout>

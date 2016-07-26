@@ -13,8 +13,8 @@
     tools:showIn="@layout/activity_main">
 
 
+    <include layout="@layout/homelayout"/>
 
-    <include layout="@layout/compassitem" />
 
 
 </RelativeLayout>

@@ -6,17 +6,13 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
@@ -33,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     boolean magnetValuesSet = false;
 
     View compassContainer;
-    View homeLayoutContainer;
+    View homeLayoutImageContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +48,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                homeLayoutImageContainer.setVisibility(
+                        homeLayoutImageContainer.getVisibility() == View.VISIBLE ?
+                        View.INVISIBLE : View.VISIBLE);
             }
         });
         compassContainer = findViewById(R.id.compasscontainer);
-        homeLayoutContainer = findViewById(R.id.home_layout_image);
+        homeLayoutImageContainer = findViewById(R.id.homelayoutcontainer);
     }
 
     @Override
@@ -99,13 +96,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             SensorManager.getOrientation(rotationMatrix, orientationMatrix);
             float azimuthInRadians = orientationMatrix[0];
             float azimuthInDegrees = (float)(Math.toDegrees(azimuthInRadians)+360)%360;
-            Compass.azimuthInDegrees = azimuthInDegrees;
             RotateAnimation ra = new RotateAnimation(currentDegree, -azimuthInDegrees,
                     Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
             ra.setDuration(250);
             ra.setFillAfter(true);
             compassContainer.startAnimation(ra);
-            homeLayoutContainer.startAnimation(ra);
+//            if(homeLayoutImageContainer.getVisibility() == View.VISIBLE) {
+//                RotateAnimation ra1 = new RotateAnimation(currentDegree, -azimuthInDegrees,
+//                        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//                ra1.setDuration(250);
+//                ra1.setFillAfter(true);
+//                homeLayoutImage.startAnimation(ra1);
+//            }
+
             currentDegree = -azimuthInDegrees;
         }
     }

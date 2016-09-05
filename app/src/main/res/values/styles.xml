@@ -1,11 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!--<item name="color1">#73AFB6</item>-->
+        <!--<item name="color2">#5F9DA1</item>-->
+        <!--<item name="color3">#A79E65</item>-->
+        <!--<item name="color4">#E2D893</item>-->
+        <!--<item name="color5">#2B2301</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -13,7 +19,17 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.FanMenu" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">#73AFB6</item>
+    </style>
+
+    <style name="AppTheme.Compass" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">#73AFB6</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">#73AFB6</item>
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

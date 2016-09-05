@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fanmenucontainer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|start"
+
+    android:alpha="1.5">
+
+    <sam.richwandell.com.myapplication.items.FanMenu
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:menu_position="right"
+        android:theme="@style/AppTheme.FanMenu"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true">
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            app:backgroundTint="?attr/colorPrimary"
+            android:src="@drawable/ic_donut"
+            android:adjustViewBounds="false" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/start_fingerprint"
+            android:src="@drawable/ic_fingerprint_white"
+            android:visibility="gone"
+            app:backgroundTint="?attr/colorPrimary"
+            app:fabSize="mini" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_delete"
+            android:visibility="gone"
+            app:backgroundTint="?attr/colorPrimary"
+            app:fabSize="mini" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_dialog_email"
+            android:visibility="gone"
+            app:backgroundTint="?attr/colorPrimary"
+            app:fabSize="mini" />
+
+    </sam.richwandell.com.myapplication.items.FanMenu>
+
+</RelativeLayout>

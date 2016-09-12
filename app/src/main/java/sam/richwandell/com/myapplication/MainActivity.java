@@ -1,24 +1,25 @@
 package sam.richwandell.com.myapplication;
 
+
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import sam.richwandell.com.myapplication.db.DBOpenHelper;
 import sam.richwandell.com.myapplication.eventlisteners.FingerPrintClickListener;
-import sam.richwandell.com.myapplication.eventlisteners.FloorplanSelectionClickListener;
 import sam.richwandell.com.myapplication.items.Compass;
+import sam.richwandell.com.myapplication.items.FanMenu;
+import sam.richwandell.com.myapplication.upnp.UPnP;
+import sam.richwandell.com.myapplication.upnp.UPnPListener;
 
 public class MainActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +42,34 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fingerPrintButton = (FloatingActionButton)findViewById(R.id.start_fingerprint);
         fingerPrintButton.setOnClickListener(new FingerPrintClickListener());
+        RV.fm = (FanMenu)RV.mainActivity.findViewById(R.id.the_fanmenu);
 
+        final UPnP upnp = new UPnP(this, new UPnPListener() {
+
+            @Override
+            public void onDiscover(UPnP.HeaderParser.UPnPDevice device) {
+                String name = device.get("modelName");
+
+                if(name != null) {
+                    if(name.equals("location_tracker_server")){
+                        RV.trackers.add(device);
+                        Log.d("rdebug", "found a location tracker server! " + device.get("modelNumber"));
+                        RV.showTrackerServerSelection();
+                    }
+                }
+            }
+
+        });
+
+        final Handler handler = new Handler();
+        handler.post(new Runnable(){
+            @Override
+            public void run() {
+                upnp.discover();
+            }
+        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,12 +82,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_load_floorplan:
-                RV.floorPlans = HomeLayout.getFloorPlans();
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Select Floor Plan");
-                builder.setItems(RV.floorPlans, new FloorplanSelectionClickListener());
-                AlertDialog alert = builder.create();
-                alert.show();
+                RV.showFloorPlanSelection();
                 break;
 
             case R.id.action_settings:

@@ -59,6 +59,13 @@
         });
     }
 
+    window.builderGetFloorPlans = function(cb){
+        var req = database.transaction(["layout_images"], "readwrite")
+            .objectStore("layout_images")
+            .getAll();
+        req.onsuccess = cb;
+    };
+
     function builderClearSelection(){
         multi_selected_grid = [];
         selected_grid = [];
@@ -75,6 +82,7 @@
         super_debug ? console.debug(arguments.callee.name) : '';
         mouse_down = true;
         var results = getCanvasMouseXandY();
+
         m_x_start = results[0];
         m_y_start = results[1];
         $(canvas).css("opacity", ".7");
@@ -146,6 +154,12 @@
 
     window.builderLoadFloorplan = builderLoadFloorplan;
 
+    window.builderLoadFloorplan2 = function(id){
+        debug ? console.debug(arguments.callee.name) : '';
+        var s = Android.getData2(plan);
+        loadBuilderData(JSON.parse(s));
+    }
+
     function bindTouchEvents(){
         debug ? console.debug(arguments.callee.name) : '';
         $(overlay).off();
@@ -168,7 +182,10 @@
             },
             "touchend": function(event){
                 if(touch_cx && touch_cy) {
-                    clickCanvas(touch_cx, touch_cy);
+                    var xy = clickCanvas(touch_cx, touch_cy);
+                    if(Android && Android.setSpace){
+                        Android.setSpace(JSON.stringify(xy), $("#builder_selected_box_name").val(), selected_id);
+                    }
                 }
             }
         });
@@ -374,7 +391,6 @@
     function clickCanvas(cx, cy){
         var results = getGridXandY(cx, cy);
         var x = results[0], y = results[1];
-        console.log(x, y);
         var n = $("#builder_selected_box_name").val();
         if(full_grid[x]){
             if(full_grid[x][y] || full_grid[x][y] === ""){
@@ -383,6 +399,7 @@
         }
         setSelectedGrid(x, y, n);
         redraw();
+        return [x, y];
     }
 
     function getCanvasMouseXandY(){
@@ -687,6 +704,11 @@
         debug ? console.debug(arguments.callee.name) : '';
         database = event.target.result;
         reloadFromDb();
+        if(typeof process != "undefined"){
+            if(process.mainModule){
+                process.mainModule.exports.register(the_builder);
+            }
+        }
     }
 
     function dbonerror(event) {
@@ -699,6 +721,8 @@
         database = event.target.result;
         var objectStore = database.createObjectStore("layout_images", { keyPath: "id", autoIncrement: true });
     }
+
+    var the_builder = this;
 
     $(function(){
         window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;

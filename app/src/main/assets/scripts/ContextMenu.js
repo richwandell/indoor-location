@@ -1,5 +1,6 @@
 ;(function ($) {
     function loadMenu() {
+        console.log = console.error;
         // Load native UI library
         var gui = require('nw.gui');
 
@@ -26,18 +27,18 @@
         var win = gui.Window.get();
 
         // Create a menubar for window menu
-        var menubar = new gui.Menu({type: 'menubar'});
+        var menubar = new gui.Menu({type: 'menubar', label: 'Grid Builder'});
+
 
         // Create a menuitem
         var sub1 = new gui.Menu();
 
+
         sub1.append(new gui.MenuItem({
 
-            label: 'Test1',
+            label: 'Broadcast',
             click: function () {
-                var element = document.createElement('div');
-                element.appendChild(document.createTextNode('Test 1'));
-                document.body.appendChild(element);
+                process.mainModule.exports.startBroadcast();
             }
         }));
         //

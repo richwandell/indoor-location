@@ -9,6 +9,7 @@
     android:alpha="1.5">
 
     <sam.richwandell.com.myapplication.items.FanMenu
+        android:id="@+id/the_fanmenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:menu_position="right"
@@ -24,6 +25,7 @@
             android:layout_marginLeft="20dp"
             app:backgroundTint="?attr/colorPrimary"
             android:src="@drawable/ic_donut"
+            android:scaleType="center"
             android:adjustViewBounds="false" />
 
         <android.support.design.widget.FloatingActionButton
@@ -31,6 +33,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/start_fingerprint"
             android:src="@drawable/ic_fingerprint_white"
+            android:scaleType="center"
+            app:backgroundTint="?attr/colorPrimary"
+            app:fabSize="mini"
+            android:visibility="gone" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_track_changes"
+            android:scaleType="center"
             android:visibility="gone"
             app:backgroundTint="?attr/colorPrimary"
             app:fabSize="mini" />
@@ -38,7 +50,7 @@
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_delete"
+            android:src="@drawable/ic_grid"
             android:visibility="gone"
             app:backgroundTint="?attr/colorPrimary"
             app:fabSize="mini" />
@@ -46,7 +58,7 @@
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_dialog_email"
+            android:src="@android:drawable/ic_dialog_info"
             android:visibility="gone"
             app:backgroundTint="?attr/colorPrimary"
             app:fabSize="mini" />

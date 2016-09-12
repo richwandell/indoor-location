@@ -20,6 +20,14 @@ public class WebAppInterface {
         wView = c;
     }
 
+    @JavascriptInterface
+    public void setSpace(String coords, String name, int floorPlanId){
+        RV.floorPlanCoords = coords;
+        RV.spaceName = name;
+        RV.floorPlanId = floorPlanId;
+        new Wifi().runScan();
+    }
+
     /** Show a toast from the web page */
     @JavascriptInterface
     public void showToast(String toast) {
@@ -62,6 +70,5 @@ public class WebAppInterface {
         }
         Log.d("rdebug", buf.toString());
         return buf.toString();
-
     }
 }

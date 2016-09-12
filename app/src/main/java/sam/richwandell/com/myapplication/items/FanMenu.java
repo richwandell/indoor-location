@@ -86,7 +86,7 @@ public class FanMenu extends ViewGroup {
     /**
      * Toggle visibility of menu items
      */
-    private void toggleMenuItems() {
+    public void toggleMenuItems() {
         if (!mMenuOpen) {
             mMenuButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotate_open));
             for(int i = 1; i < getChildCount(); i++) {

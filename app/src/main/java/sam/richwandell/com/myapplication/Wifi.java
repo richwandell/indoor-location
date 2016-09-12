@@ -89,7 +89,7 @@ public class Wifi {
                     scanEnabled = false;
                     RV.fm.toggleMenuItems();
                 }else if(RV.floorPlanId == -1){
-                    RV.showFloorPlanSelection();
+                    RV.showTrackerServerSelection();
                     RV.fm.toggleMenuItems();
                 }
             }

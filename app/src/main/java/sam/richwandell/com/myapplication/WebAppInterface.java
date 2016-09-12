@@ -35,6 +35,14 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
+    public String getData2(int floorPlanIndex){
+        Log.d("rdebug", Integer.toString(floorPlanIndex));
+        int id = RV.allFloorplans[floorPlanIndex].getId();
+        RV.floorPlanId = id;
+        return RV.allFloorplans[floorPlanIndex].toString();
+    }
+
+    @JavascriptInterface
     public String getData(String id){
         StringBuilder buf = new StringBuilder();
         InputStream json = null;

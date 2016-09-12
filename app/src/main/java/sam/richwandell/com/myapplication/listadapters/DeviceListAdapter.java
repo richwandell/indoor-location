@@ -23,6 +23,7 @@ public class DeviceListAdapter extends ArrayAdapter<String> {
         this.imgid = imgid;
     }
 
+    @Override
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
 

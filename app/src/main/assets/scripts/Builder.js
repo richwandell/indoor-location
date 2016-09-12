@@ -156,7 +156,8 @@
 
     window.builderLoadFloorplan2 = function(id){
         debug ? console.debug(arguments.callee.name) : '';
-        var s = Android.getData2(plan);
+        console.log(id);
+        var s = Android.getData2(Number(id));
         loadBuilderData(JSON.parse(s));
     }
 

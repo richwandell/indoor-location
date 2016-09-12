@@ -43,6 +43,8 @@ public class UPnP {
 
     private static HashMap<String, HeaderParser.UPnPDevice> deviceCache = new HashMap<>();
 
+    private static DatagramSocket socket = null;
+
     public UPnP(Context context){
         this.context = context;
     }
@@ -61,13 +63,10 @@ public class UPnP {
 
             @Override
             public void run() {
-                WifiManager wifi = (WifiManager)context.getSystemService(context.getApplicationContext().WIFI_SERVICE );
+                WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
                 if(wifi != null) {
                     WifiManager.MulticastLock lock = wifi.createMulticastLock("multicast_lock");
                     lock.acquire();
-
-                    DatagramSocket socket = null;
-
                     try {
                         InetAddress group = InetAddress.getByName("239.255.255.250");
                         int port = 1900;
@@ -79,8 +78,20 @@ public class UPnP {
                                         "ST: ssdp:all\r\n"+
                                         "\r\n";
 
-                        socket = new DatagramSocket(port);
-                        socket.setReuseAddress(true);
+                        if(socket == null){
+                            socket = new DatagramSocket(port);
+                            socket.setReuseAddress(true);
+                        }
+
+                        if(socket.isClosed()){
+                            socket = new DatagramSocket(port);
+                            socket.setReuseAddress(true);
+                        }
+
+                        if(!socket.isBound()) {
+                            socket = new DatagramSocket(port);
+                            socket.setReuseAddress(true);
+                        }
 
                         DatagramPacket dgram = new DatagramPacket(query.getBytes(), query.length(),
                                 group, port);
@@ -97,14 +108,13 @@ public class UPnP {
                             HeaderParser hp = new HeaderParser(s);
                             curTime = System.currentTimeMillis();
                         }
-
-                    } catch (UnknownHostException e) {
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     finally {
-                        socket.close();
+                        if(socket != null) {
+                            socket.close();
+                        }
                     }
                     lock.release();
                 }
@@ -188,11 +198,7 @@ public class UPnP {
                             }
                         }
                     }
-                } catch (ParserConfigurationException e) {
-                    e.printStackTrace();
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                } catch (ParserConfigurationException | IOException | SAXException e) {
                     e.printStackTrace();
                 }
             }

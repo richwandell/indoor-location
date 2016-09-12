@@ -65,11 +65,14 @@ public class MainActivity extends AppCompatActivity {
         handler.post(new Runnable(){
             @Override
             public void run() {
-                upnp.discover();
+                if(RV.floorPlanId == -1) {
+                    Log.d("rdebug", "upnp discovering again...");
+                    upnp.discover();
+                }
+                handler.postDelayed(this, 20000);
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_load_floorplan:
-                RV.showFloorPlanSelection();
+                RV.showTrackerServerSelection();
                 break;
 
             case R.id.action_settings:

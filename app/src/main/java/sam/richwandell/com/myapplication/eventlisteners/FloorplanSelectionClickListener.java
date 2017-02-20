@@ -4,15 +4,20 @@ import android.content.DialogInterface;
 import android.util.Log;
 import android.webkit.WebView;
 
-import sam.richwandell.com.myapplication.RV;
+import sam.richwandell.com.myapplication.MainActivity;
+import static sam.richwandell.com.myapplication.RV.TAG;
 
-public class FloorplanSelectionClickListener implements DialogInterface.OnClickListener {
+public class FloorplanSelectionClickListener implements DialogInterface.OnClickListener{
+    private MainActivity main;
 
+    public FloorplanSelectionClickListener(MainActivity main){
+
+        this.main = main;
+    }
     @Override
-    public void onClick(DialogInterface dialog, int item) {
-        // Do something with the selection
-        Log.d("rdebug", RV.floorPlans[item]);
-        ((WebView) RV.homeLayoutImageContainer)
-                .loadUrl("javascript:builderLoadFloorplan('" + RV.floorPlans[item] + "')");
+    public void onClick(DialogInterface dialogInterface, int i) {
+        Log.d(TAG, Integer.toString(i));
+        main.homeLayoutImageContainer
+                .loadUrl("javascript:loadFloorPlan('" + Integer.toString(i) + "')");
     }
 }

@@ -1,15 +1,21 @@
 package sam.richwandell.com.myapplication.eventlisteners;
 
 import android.view.View;
-import android.webkit.WebView;
 
-import sam.richwandell.com.myapplication.RV;
+import sam.richwandell.com.myapplication.MainActivity;
 
 public class FabOnClick implements View.OnClickListener {
     private boolean toggle = false;
+    private MainActivity main;
+
+    public FabOnClick(MainActivity main){
+
+        this.main = main;
+    }
+
     @Override
     public void onClick(View view) {
-        ((WebView) RV.homeLayoutImageContainer)
+        main.homeLayoutImageContainer
                 .loadUrl("javascript:builderToggleGridLines(" + (toggle ? "true" : "false") + ")");
         if(toggle){
             toggle = false;

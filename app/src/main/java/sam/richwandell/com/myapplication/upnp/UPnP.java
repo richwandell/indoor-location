@@ -243,7 +243,7 @@ public class UPnP {
                 String endPoint = get("endPoint");
                 if (endPoint != null) {
                     RequestQueue queue = Volley.newRequestQueue(context);
-                    String url = endPoint + "get/floorplans";
+                    String url = endPoint + "floorplans";
                     Log.d("rdebug", url);
                     JsonArrayRequest req = new JsonArrayRequest(url,
 

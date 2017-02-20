@@ -67,7 +67,7 @@ public class Compass extends RelativeLayout implements SensorEventListener {
 
             ra.setDuration(250);
             ra.setFillAfter(true);
-            RV.compass.startAnimation(ra);
+            startAnimation(ra);
 
             currentDegree = -azimuthInDegrees;
         }

@@ -31,6 +31,7 @@ public class ILocationKalman {
 
 
     public ILocationKalman(double sample) {
+
         readings[currentReading] = sample;
         currentReading++;
         pest = 0;

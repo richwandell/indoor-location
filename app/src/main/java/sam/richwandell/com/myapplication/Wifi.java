@@ -16,17 +16,21 @@ import java.util.HashMap;
 import java.util.List;
 
 import sam.richwandell.com.myapplication.db.DBOpenHelper;
+import static sam.richwandell.com.myapplication.RV.TAG;
 
 
 public class Wifi {
+
     private boolean scanEnabled = true;
+
     private WifiManager mWifiManager;
 
-    private final int numScans = 10;
+    private final int numScans = 3;
 
     private int scanNumber;
 
-    ProgressDialog progress;
+    private ProgressDialog progress;
+
 
     private final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
         @Override
@@ -59,17 +63,22 @@ public class Wifi {
             }
         }
     };
+    private MainActivity main;
+
+    public Wifi(MainActivity main){
+        this.main = main;
+    }
 
     public void runScan() {
 
         RV.mode = RV.MODE.FINGERPRINTING;
-        RV.mainActivity.runOnUiThread(new Runnable(){
+        main.runOnUiThread(new Runnable(){
 
             @Override
             public void run() {
-                if(scanEnabled && RV.floorPlanId > -1){
+                if(scanEnabled && RV.floorPlanId != null){
                     scanNumber = numScans;
-                    progress = new ProgressDialog(RV.mainActivity);
+                    progress = new ProgressDialog(main);
                     progress.setMessage("Scanning Location 1/" + scanNumber);
                     progress.setCancelable(true);
                     progress.setButton(ProgressDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
@@ -80,17 +89,17 @@ public class Wifi {
                         }
                     });
                     progress.show();
-                    Log.d("rdebug", "scan enabled");
+                    Log.d(TAG, "scan enabled");
                     RV.locationKalmanMap = new HashMap<>();
-                    RV.mainActivity.registerReceiver(mWifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+                    main.registerReceiver(mWifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 
-                    mWifiManager = (WifiManager) RV.mainActivity.getSystemService(Context.WIFI_SERVICE);
+                    mWifiManager = (WifiManager) main.getSystemService(Context.WIFI_SERVICE);
                     mWifiManager.startScan();
                     scanEnabled = false;
-                    RV.fm.toggleMenuItems();
-                }else if(RV.floorPlanId == -1){
-                    RV.showTrackerServerSelection();
-                    RV.fm.toggleMenuItems();
+                    main.fm.toggleMenuItems();
+                }else if(RV.floorPlanId == null){
+                    RV.showTrackerServerSelection(main);
+                    main.fm.toggleMenuItems();
                 }
             }
         });
@@ -98,19 +107,20 @@ public class Wifi {
     }
 
     private void finishScan(){
-        RV.mainActivity.unregisterReceiver(mWifiScanReceiver);
+        Log.d(TAG, "Wifi.finishScan");
+        main.unregisterReceiver(mWifiScanReceiver);
         scanEnabled = true;
         progress.hide();
-        DBOpenHelper mDbHelper = new DBOpenHelper(RV.mainActivity);
+        DBOpenHelper mDbHelper = new DBOpenHelper(main);
 
         SQLiteDatabase writableDatabase = mDbHelper.getWritableDatabase();
         long id = writableDatabase.insert("scan", "s_id", null);
-        int fp_id = RV.floorPlanId;
-        String coords = RV.floorPlanCoords;
+        String fp_id = RV.floorPlanId;
+        int[] coords = RV.floorPlanCoords;
 
         for(String k : RV.locationKalmanMap.keySet()){
             ILocationKalman km = RV.locationKalmanMap.get(k);
-            Log.d("rdebug",
+            Log.d(TAG,
                     "{\"" + k + "\": { " +
                             "\"values\": [" +
                             km.toString() + "], " +
@@ -120,11 +130,12 @@ public class Wifi {
             values.put("s_id", id);
             values.put("fp_id", fp_id);
             values.put("ap_id", k);
-            values.put("coords", coords);
+            values.put("x", coords[0]);
+            values.put("y", coords[1]);
             values.put("value", km.getStateEstimation());
             values.put("orig_values", "[" + km.toString() + "]");
             writableDatabase.insert("scan_results", null, values);
         }
-        DBOpenHelper.debugAll();
+        DBOpenHelper.debugAll(main);
     }
 }

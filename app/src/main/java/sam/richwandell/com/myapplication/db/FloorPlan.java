@@ -11,18 +11,19 @@ public class FloorPlan {
         this.fp = fp;
     }
 
-    public int getId(){
+    public String getId(){
         try {
-            return this.fp.getInt("id");
+            return this.fp.getString("id");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return -1;
+        return null;
     }
 
     public String getFloorPlanName(){
         try {
-            return this.fp.getString("floorplanname");
+            JSONObject layoutImage = this.fp.getJSONObject("layout_image");
+            return layoutImage.getString("floorplanname");
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -11,21 +11,30 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import static sam.richwandell.com.myapplication.RV.TAG;
 
-public class WebAppInterface {
-    WebView wView;
+class WebAppInterface {
+
+    private WebView wView;
+
+    private Context context;
 
     /** Instantiate the interface and set the context */
-    WebAppInterface(WebView c) {
+    WebAppInterface(WebView c, Context con) {
         wView = c;
+        context = con;
     }
 
     @JavascriptInterface
-    public void setSpace(String coords, String name, int floorPlanId){
-        RV.floorPlanCoords = coords;
-        RV.spaceName = name;
+    public String getRecordedPoints(String fp_id){
+        return "";
+    }
+
+    @JavascriptInterface
+    public void setSpace(String x, String y, String floorPlanId){
+        Log.d(TAG, x + " " + y + " " + floorPlanId);
+        RV.floorPlanCoords = new int[]{Integer.parseInt(x), Integer.parseInt(y)};
         RV.floorPlanId = floorPlanId;
-        new Wifi().runScan();
     }
 
     /** Show a toast from the web page */
@@ -36,8 +45,8 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public String getData2(int floorPlanIndex){
-        Log.d("rdebug", Integer.toString(floorPlanIndex));
-        int id = RV.allFloorplans[floorPlanIndex].getId();
+        Log.d(TAG, Integer.toString(floorPlanIndex));
+        String id = RV.allFloorplans[floorPlanIndex].getId();
         RV.floorPlanId = id;
         return RV.allFloorplans[floorPlanIndex].toString();
     }
@@ -47,7 +56,7 @@ public class WebAppInterface {
         StringBuilder buf = new StringBuilder();
         InputStream json = null;
         String filename = "floorplans/" + id;
-        Log.d("rdebug", filename);
+        Log.d(TAG, filename);
         try {
             json = wView.getContext().getAssets().open(filename);
         } catch (IOException e) {

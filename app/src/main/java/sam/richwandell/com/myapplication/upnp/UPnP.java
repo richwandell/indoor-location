@@ -35,6 +35,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import sam.richwandell.com.myapplication.db.FloorPlan;
 import sam.richwandell.com.myapplication.eventlisteners.FloorPlanReceiver;
+import static sam.richwandell.com.myapplication.RV.TAG;
 
 
 public class UPnP {
@@ -244,19 +245,19 @@ public class UPnP {
                 if (endPoint != null) {
                     RequestQueue queue = Volley.newRequestQueue(context);
                     String url = endPoint + "floorplans";
-                    Log.d("rdebug", url);
+                    Log.d(TAG, url);
                     JsonArrayRequest req = new JsonArrayRequest(url,
 
                             new Response.Listener<JSONArray>() {
 
                                 @Override
                                 public void onResponse(JSONArray response) {
-                                    Log.d("rdebug", response.toString());
+                                    Log.d(TAG, response.toString());
                                     FloorPlan[] fps = new FloorPlan[response.length()];
                                     for(int i = 0; i < response.length(); i++){
                                         try {
                                             fps[i] = new FloorPlan((JSONObject)response.get(i));
-                                            Log.d("rdebug", Integer.toString(i) + ": " + fps[i].toString());
+                                            Log.d(TAG, Integer.toString(i) + ": " + fps[i].toString());
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
@@ -270,7 +271,7 @@ public class UPnP {
 
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Log.d("rdebug", error.toString());
+                                    Log.d(TAG, error.toString());
                                 }
 
                             }

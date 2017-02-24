@@ -23,16 +23,19 @@ public class RV {
     public static MODE mode;
     public static FloorPlan[] allFloorplans;
     public static boolean isConnected = false;
+    /**
+     * When a upnp tracking service is selected we will save an instance here
+     */
+    public static UPnP.HeaderParser.UPnPDevice upnpDevice;
 
     /**
      * The app can be in fingerprinting mode or localizing mode
      */
     public enum MODE {
-        FINGERPRINTING, LOCALIZING, INFO
+        FINGERPRINTING, LOCALIZING, UPDATING
     }
 
     //compass variables
-    static SensorManager sensorManager;
     static Sensor accelerometer;
     static Sensor magneticfield;
 

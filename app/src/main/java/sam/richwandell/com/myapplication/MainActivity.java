@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     public FanMenu fm;
 
     private static final int PERMISSIONS_REQUEST_CODE_ACCESS_FINE_LOCATION = 12345;
+    private SensorManager sensorManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
 
         //set up the sensor event listener
         this.compass = (Compass)findViewById(R.id.compasscontainer);
-        RV.sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        RV.magneticfield = RV.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        RV.sensorManager.registerListener(this.compass, RV.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
-        RV.accelerometer = RV.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        RV.sensorManager.registerListener(this.compass, RV.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        RV.magneticfield = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        this.sensorManager.registerListener(this.compass, RV.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
+        RV.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.sensorManager.registerListener(this.compass, RV.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         this.homeLayoutImageContainer = (HomeLayout)findViewById(R.id.homelayoutcontainer);
 
         FloatingActionButton fingerPrintButton = (FloatingActionButton)findViewById(R.id.start_fingerprint);
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         RV.trackers.add(device);
                         Log.d(TAG, "found a location tracker server! " + device.get("modelNumber"));
                         RV.showTrackerServerSelection(main);
+                        RV.upnpDevice = device;
                     }
                 }
             }
@@ -139,13 +141,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        RV.sensorManager.registerListener(this.compass, RV.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
-        RV.sensorManager.registerListener(this.compass, RV.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.compass, RV.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.compass, RV.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        RV.sensorManager.unregisterListener(this.compass);
+        this.sensorManager.unregisterListener(this.compass);
     }
 }

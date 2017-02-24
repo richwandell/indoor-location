@@ -34,7 +34,7 @@ public class ILocationKalman {
 
         readings[currentReading] = sample;
         currentReading++;
-        pest = 0;
+
         //state transition matrix
         A = new Array2DRowRealMatrix(new double[]{1d});
 
@@ -90,28 +90,6 @@ public class ILocationKalman {
         return estimate[0];
     }
 
-
-    double mea;
-    double cest = 0;
-    double pest = 0;
-
-    double kg;
-    double eest = 2d;
-    double emea = 1d;
-
-    public void add(double m){
-        if(m < 0.0d && m > -100d) {
-            mea = m;
-            kg = eest / (eest + emea);
-            cest = pest + kg * (mea - pest);
-            pest = cest;
-            eest = (emea * eest) / (emea + eest);
-        }
-    }
-
-    public double getCurrent(){
-        return cest;
-    }
 
     @Override
     public String toString(){

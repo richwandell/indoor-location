@@ -25,7 +25,7 @@ public class Wifi {
 
     private WifiManager mWifiManager;
 
-    private final int numScans = 3;
+    private final int numScans = 10;
 
     private int scanNumber;
 

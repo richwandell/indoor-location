@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:keepScreenOn="true"
     tools:context="sam.richwandell.com.myapplication.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -28,5 +29,7 @@
     <include layout="@layout/compassitem" />
 
     <include layout="@layout/fanmenu" />
+
+    <include layout="@layout/android_phone" />
 
 </android.support.design.widget.CoordinatorLayout>

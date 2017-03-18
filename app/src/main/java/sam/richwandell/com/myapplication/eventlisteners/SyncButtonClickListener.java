@@ -39,6 +39,7 @@ public class SyncButtonClickListener implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         Log.d(TAG, "sync button clicked");
+        main.resetFabColors();
         this.progress = new ProgressDialog(main);
         progress.setTitle("Sync");
         progress.setMessage("Saving data points to server...");
@@ -95,10 +96,11 @@ public class SyncButtonClickListener implements View.OnClickListener {
                 cursor.moveToNext();
             } while (!cursor.isLast());
         }catch(Exception e){
-            Log.d(TAG, "DBOpenHelper.debugAll: " + e.toString());
+            Log.d(TAG, "SyncButtonClickListener.onClick: " + e.toString());
             cursor.close();
             mDbHelper.close();
             progress.dismiss();
+            main.resetFabColors();
         }finally {
             cursor.close();
             mDbHelper.close();

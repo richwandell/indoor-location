@@ -4,6 +4,7 @@ package sam.richwandell.com.myapplication;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -17,8 +18,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import sam.richwandell.com.myapplication.db.FloorPlan;
 import sam.richwandell.com.myapplication.eventlisteners.FingerPrintClickListener;
+import sam.richwandell.com.myapplication.eventlisteners.MovementSensorEventListener;
 import sam.richwandell.com.myapplication.eventlisteners.SyncButtonClickListener;
+import sam.richwandell.com.myapplication.eventlisteners.TrackChangesButtonClickListener;
+import sam.richwandell.com.myapplication.items.AndroidPhone;
 import sam.richwandell.com.myapplication.items.Compass;
 import sam.richwandell.com.myapplication.items.FanMenu;
 import sam.richwandell.com.myapplication.upnp.UPnP;
@@ -28,11 +33,43 @@ import static sam.richwandell.com.myapplication.RV.TAG;
 public class MainActivity extends AppCompatActivity {
 
     public HomeLayout homeLayoutImageContainer;
-    private Compass compass;
+
     public FanMenu fm;
 
     private static final int PERMISSIONS_REQUEST_CODE_ACCESS_FINE_LOCATION = 12345;
+
+    //Sensors
     private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private Sensor magneticfield;
+    private Sensor stepSensor;
+
+    //Floating Action Buttons
+    private FloatingActionButton fingerPrintButton;
+    private FloatingActionButton syncButton;
+    private FloatingActionButton trackChangesButton;
+
+
+    private Compass compass;
+    private AndroidPhone androidPhone;
+
+    private FloorPlan selectedFloorPlan;
+
+    public void setSelectedFloorPlan(FloorPlan fp){
+        selectedFloorPlan = fp;
+    }
+
+    public FloorPlan getSelectedFloorPlan(){
+        return selectedFloorPlan;
+    }
+
+
+    public void resetFabColors(){
+        int color = ContextCompat.getColor(this, R.color.color1);
+        fingerPrintButton.setBackgroundTintList(ColorStateList.valueOf(color));
+        syncButton.setBackgroundTintList(ColorStateList.valueOf(color));
+        trackChangesButton.setBackgroundTintList(ColorStateList.valueOf(color));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +82,30 @@ public class MainActivity extends AppCompatActivity {
 
         //set up the sensor event listener
         this.compass = (Compass)findViewById(R.id.compasscontainer);
+        this.androidPhone = (AndroidPhone)findViewById(R.id.android_phone_container);
+        this.androidPhone.setMain(this);
         this.sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        RV.magneticfield = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        this.sensorManager.registerListener(this.compass, RV.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
-        RV.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        this.sensorManager.registerListener(this.compass, RV.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        this.magneticfield = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        this.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.stepSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+
+        this.sensorManager.registerListener(this.compass, this.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.compass, this.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.androidPhone, this.magneticfield, SensorManager.SENSOR_DELAY_FASTEST);
+        this.sensorManager.registerListener(this.androidPhone, this.accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        this.sensorManager.registerListener(this.androidPhone, this.stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
+
         this.homeLayoutImageContainer = (HomeLayout)findViewById(R.id.homelayoutcontainer);
 
-        FloatingActionButton fingerPrintButton = (FloatingActionButton)findViewById(R.id.start_fingerprint);
+        this.fingerPrintButton = (FloatingActionButton)findViewById(R.id.start_fingerprint);
         fingerPrintButton.setOnClickListener(new FingerPrintClickListener(this));
 
-        FloatingActionButton syncButton = (FloatingActionButton)findViewById(R.id.sync_with_server);
+        this.syncButton = (FloatingActionButton)findViewById(R.id.sync_with_server);
         syncButton.setOnClickListener(new SyncButtonClickListener(this));
+
+        this.trackChangesButton = (FloatingActionButton) findViewById(R.id.track_changes);
+        trackChangesButton.setOnClickListener(new TrackChangesButtonClickListener(this));
 
         this.fm = (FanMenu)findViewById(R.id.the_fanmenu);
 
@@ -141,13 +190,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        this.sensorManager.registerListener(this.compass, RV.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
-        this.sensorManager.registerListener(this.compass, RV.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.compass, this.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.compass, this.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.androidPhone, this.magneticfield, SensorManager.SENSOR_DELAY_FASTEST);
+        this.sensorManager.registerListener(this.androidPhone, this.accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        this.sensorManager.registerListener(this.androidPhone, this.stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         this.sensorManager.unregisterListener(this.compass);
+        this.sensorManager.unregisterListener(this.androidPhone);
     }
 }

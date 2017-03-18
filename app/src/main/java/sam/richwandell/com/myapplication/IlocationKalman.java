@@ -90,6 +90,10 @@ public class ILocationKalman {
         return estimate[0];
     }
 
+    public double getFirstMeasurement(){
+        return readings[0];
+    }
+
 
     @Override
     public String toString(){

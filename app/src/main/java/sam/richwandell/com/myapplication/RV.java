@@ -1,7 +1,5 @@
 package sam.richwandell.com.myapplication;
 
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.support.v7.app.AlertDialog;
 
 import java.util.ArrayList;
@@ -35,15 +33,10 @@ public class RV {
         FINGERPRINTING, LOCALIZING, UPDATING
     }
 
-    //compass variables
-    static Sensor accelerometer;
-    static Sensor magneticfield;
-
     //all floorplans in the assets folder
     public static String[] floorPlans;
 
     //kalman filters
-    static HashMap<String, ILocationKalman> locationKalmanMap;
 
     //floor plan variables
     static int[] floorPlanCoords;

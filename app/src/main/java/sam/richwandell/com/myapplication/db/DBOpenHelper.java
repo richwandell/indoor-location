@@ -12,9 +12,9 @@ import static sam.richwandell.com.myapplication.RV.TAG;
 public class DBOpenHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 8;
 
-    public static final String DATABASE_NAME = "data.db";
+    private static final String DATABASE_NAME = "data.db";
 
     private static final String SCAN_TABLE_CREATE =
             "create table scan (s_id INTEGER PRIMARY KEY);";
@@ -63,10 +63,9 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         Log.d(TAG, "DBOpenHelper.debugAll");
         DBOpenHelper mDbHelper = new DBOpenHelper(main);
         SQLiteDatabase readableDatabase = mDbHelper.getReadableDatabase();
-        Cursor cursor = readableDatabase.query("scan_results", new String[]{
+        try (Cursor cursor = readableDatabase.query("scan_results", new String[]{
                         "s_id", "fp_id", "ap_id", "x", "y", "value", "orig_values", "created"},
-                null, null, null, null, null);
-        try {
+                null, null, null, null, null)) {
             cursor.moveToFirst();
             do {
                 int s_id = cursor.getInt(0);
@@ -89,12 +88,10 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
                 cursor.moveToNext();
             } while (!cursor.isLast());
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.d(TAG, "DBOpenHelper.debugAll: " + e.toString());
-            cursor.close();
             mDbHelper.close();
-        }finally {
-            cursor.close();
+        } finally {
             mDbHelper.close();
         }
     }

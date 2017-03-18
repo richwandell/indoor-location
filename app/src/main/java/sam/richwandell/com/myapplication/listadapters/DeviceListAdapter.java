@@ -1,6 +1,7 @@
 package sam.richwandell.com.myapplication.listadapters;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +24,9 @@ public class DeviceListAdapter extends ArrayAdapter<String> {
         this.imgid = imgid;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(int position, View view, @NonNull ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
 
         View rowView = inflater.inflate(R.layout.device_list, null, true);
@@ -38,5 +40,5 @@ public class DeviceListAdapter extends ArrayAdapter<String> {
 
 
         return rowView;
-    };
+    }
 }

@@ -21,7 +21,7 @@ public class FingerPrintClickListener implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-
+        main.resetFabColors();
         RV.mode = RV.MODE.FINGERPRINTING;
         int color = ContextCompat.getColor(view.getContext(), R.color.color3);
         view.setBackgroundTintList(ColorStateList.valueOf(color));

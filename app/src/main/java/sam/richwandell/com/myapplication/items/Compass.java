@@ -1,20 +1,14 @@
 package sam.richwandell.com.myapplication.items;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.RelativeLayout;
-
-import sam.richwandell.com.myapplication.RV;
 
 
 public class Compass extends RelativeLayout implements SensorEventListener {

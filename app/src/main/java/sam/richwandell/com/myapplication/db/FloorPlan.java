@@ -5,10 +5,26 @@ import org.json.JSONObject;
 
 public class FloorPlan {
 
-    JSONObject fp;
+    private JSONObject fp;
+
+    private int rotation = 0;
+
+    private boolean rotationParsed = false;
 
     public FloorPlan(JSONObject fp){
         this.fp = fp;
+    }
+
+    public int getRotation(){
+        if(rotationParsed) return rotation;
+        try{
+            JSONObject layoutImage = this.fp.getJSONObject("layout_image");
+            rotation = layoutImage.getInt("rotation");
+            rotationParsed = true;
+            return rotation;
+        }catch(JSONException e){
+            return 0;
+        }
     }
 
     public String getId(){

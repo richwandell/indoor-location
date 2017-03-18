@@ -5,6 +5,8 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import sam.richwandell.com.myapplication.MainActivity;
+import sam.richwandell.com.myapplication.RV;
+
 import static sam.richwandell.com.myapplication.RV.TAG;
 
 public class FloorplanSelectionClickListener implements DialogInterface.OnClickListener{
@@ -17,6 +19,7 @@ public class FloorplanSelectionClickListener implements DialogInterface.OnClickL
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
         Log.d(TAG, Integer.toString(i));
+        main.setSelectedFloorPlan(RV.allFloorplans[i]);
         main.homeLayoutImageContainer
                 .loadUrl("javascript:loadFloorPlan('" + Integer.toString(i) + "')");
     }

@@ -8,12 +8,12 @@
     <title>Grid Builder</title>
 </head>
 <body>
-    <div class="row hidden-xs" id="top_row">
-        <div class="page-header">
-            <h1>Grid Builder <small></small></h1>
-        </div>
-        <div id="resize_handle_top"></div>
-    </div>
+    <!--<div class="row hidden-xs" id="top_row">-->
+        <!--<div class="page-header">-->
+            <!--<h1>Grid Builder <small></small></h1>-->
+        <!--</div>-->
+        <!--<div id="resize_handle_top"></div>-->
+    <!--</div>-->
     <div class="row" id="bottom_row">
         <div class="col-md-8" id="builder_canvas_container_container">
             <div id="builder_canvas_container">
@@ -26,6 +26,7 @@
             </div>
         </div>
         <div class="col-md-4 hidden-xs" id="builder_container_container">
+            <img src="compass.svg" id="compass_image" />
             <div id="resize_handle"></div>
             <div class="builder_zoom">
                 <button class="btn btn-default btn-xs builder_clear_selection">Clear Selection</button>
@@ -130,6 +131,6 @@
     <div style="clear: both;"></div>
 </body>
 
-<script src="lib/js/jquery.min.js"></script>
+
 <script src="lib/js/md5.min.js"></script>
 <script src="app.js"></script>

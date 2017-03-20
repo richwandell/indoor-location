@@ -41,7 +41,7 @@ public class RV {
     //floor plan variables
     static int[] floorPlanCoords;
     static String spaceName;
-    static String floorPlanId;
+    public static String floorPlanId;
 
     public static List<UPnP.HeaderParser.UPnPDevice> trackers = new ArrayList<>();
 

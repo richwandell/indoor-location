@@ -137,6 +137,7 @@ public class SyncButtonClickListener implements View.OnClickListener {
                         int color = ContextCompat.getColor(view.getContext(), R.color.color1);
                         view.setBackgroundTintList(ColorStateList.valueOf(color));
                         progress.dismiss();
+                        main.toggleScannedArea.getScannedArea();
                     }
                 },
                 new Response.ErrorListener() {

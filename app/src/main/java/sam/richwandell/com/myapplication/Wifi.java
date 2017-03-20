@@ -87,6 +87,7 @@ public class Wifi {
         this.listener = listener;
         RV.mode = RV.MODE.LOCALIZING;
         if(scanEnabled && RV.floorPlanId != null){
+            scanEnabled = false;
             scanNumber = 0;
             Log.d(TAG, "scan enabled");
             locationKalmanMap = new HashMap<>();
@@ -94,7 +95,6 @@ public class Wifi {
 
             mWifiManager = (WifiManager) main.getSystemService(Context.WIFI_SERVICE);
             mWifiManager.startScan();
-            scanEnabled = false;
         }else if(RV.floorPlanId == null){
             RV.showTrackerServerSelection(main);
             main.fm.toggleMenuItems();
@@ -131,6 +131,7 @@ public class Wifi {
     }
 
     private void finishLocalizing(){
+        main.unregisterReceiver(mWifiScanReceiver);
         JSONObject json = new JSONObject();
         String fp_id = RV.floorPlanId;
         try {

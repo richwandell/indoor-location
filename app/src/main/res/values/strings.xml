@@ -4,6 +4,7 @@
     <string name="app_name">Indoor Localization</string>
     <string name="action_settings">Settings</string>
     <string name="load_floorplan">Load Floor Plan</string>
+    <string name="toggle_scanned_area">Toggle Scanned Area</string>
 
     <string-array name="string_array_name">
         <item>text_string</item>

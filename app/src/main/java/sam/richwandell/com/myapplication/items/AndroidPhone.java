@@ -6,13 +6,20 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import sam.richwandell.com.myapplication.MainActivity;
+import sam.richwandell.com.myapplication.R;
+import sam.richwandell.com.myapplication.RV;
+import sam.richwandell.com.myapplication.Wifi;
 import sam.richwandell.com.myapplication.db.FloorPlan;
+import sam.richwandell.com.myapplication.eventlisteners.WifiLocalizationFinishedListener;
 
 import static sam.richwandell.com.myapplication.RV.TAG;
 
@@ -30,8 +37,19 @@ public class AndroidPhone extends RelativeLayout implements SensorEventListener 
     boolean magnetValuesSet = false;
     private MainActivity main;
 
+    int height = 0;
+    int width = 0;
+
+    ImageView iv;
+
     public void setMain(MainActivity main){
         this.main = main;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        main.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        height = displayMetrics.heightPixels;
+        width = displayMetrics.widthPixels;
+        iv = (ImageView)findViewById(R.id.android_phone_image);
     }
 
     public AndroidPhone(Context context) {
@@ -44,10 +62,6 @@ public class AndroidPhone extends RelativeLayout implements SensorEventListener 
 
     public AndroidPhone(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public AndroidPhone(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     public float getCurrentDegree(){
@@ -75,6 +89,9 @@ public class AndroidPhone extends RelativeLayout implements SensorEventListener 
             sb.append(", ");
         }
         Log.d(TAG, sb.toString());
+        if(RV.mode == RV.MODE.LOCALIZING) {
+            new Wifi(main).runLocalizer(new WifiLocalizationFinishedListener(main));
+        }
     }
 
     public void magnetChanged(SensorEvent sensorEvent){
@@ -87,6 +104,17 @@ public class AndroidPhone extends RelativeLayout implements SensorEventListener 
         accelValues = sensorEvent.values;
         accelValuesSet = true;
         updateCurrentRotation(sensorEvent);
+        updateCurrentLocation();
+    }
+
+    public void updateCurrentLocation(){
+        int phoneWidth = width / 10;
+        int phoneHeight = height / 20;
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(phoneWidth, phoneHeight);
+
+        params.leftMargin = width / 2;
+        params.topMargin = height / 2;
+        iv.setLayoutParams(params);
     }
 
     public void updateCurrentRotation(SensorEvent sensorEvent){
@@ -115,7 +143,7 @@ public class AndroidPhone extends RelativeLayout implements SensorEventListener 
 
             ra.setDuration(250);
             ra.setFillAfter(true);
-            startAnimation(ra);
+            iv.startAnimation(ra);
 
             currentDegree = rotation;
         }

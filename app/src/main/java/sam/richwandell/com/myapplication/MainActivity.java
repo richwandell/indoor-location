@@ -17,11 +17,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 
 import sam.richwandell.com.myapplication.db.FloorPlan;
 import sam.richwandell.com.myapplication.eventlisteners.FingerPrintClickListener;
 import sam.richwandell.com.myapplication.eventlisteners.MovementSensorEventListener;
 import sam.richwandell.com.myapplication.eventlisteners.SyncButtonClickListener;
+import sam.richwandell.com.myapplication.eventlisteners.ToggleScannedArea;
 import sam.richwandell.com.myapplication.eventlisteners.TrackChangesButtonClickListener;
 import sam.richwandell.com.myapplication.items.AndroidPhone;
 import sam.richwandell.com.myapplication.items.Compass;
@@ -31,7 +33,7 @@ import sam.richwandell.com.myapplication.upnp.UPnPListener;
 import static sam.richwandell.com.myapplication.RV.TAG;
 
 public class MainActivity extends AppCompatActivity {
-
+    public ToggleScannedArea toggleScannedArea;
     public HomeLayout homeLayoutImageContainer;
 
     public FanMenu fm;
@@ -54,6 +56,18 @@ public class MainActivity extends AppCompatActivity {
     private AndroidPhone androidPhone;
 
     private FloorPlan selectedFloorPlan;
+    private int yPos;
+    private int xPos;
+
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            yPos = homeLayoutImageContainer.getScrollY();
+            xPos = homeLayoutImageContainer.getScrollX();
+            Log.d(TAG, "yPos = " + Integer.toString(yPos) + " xPos = " + Integer.toString(xPos));
+        }
+        return false;
+    }
 
     public void setSelectedFloorPlan(FloorPlan fp){
         selectedFloorPlan = fp;
@@ -62,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     public FloorPlan getSelectedFloorPlan(){
         return selectedFloorPlan;
     }
-
 
     public void resetFabColors(){
         int color = ContextCompat.getColor(this, R.color.color1);
@@ -108,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
         trackChangesButton.setOnClickListener(new TrackChangesButtonClickListener(this));
 
         this.fm = (FanMenu)findViewById(R.id.the_fanmenu);
+
+        this.toggleScannedArea = new ToggleScannedArea(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_CODE_ACCESS_FINE_LOCATION);
@@ -182,6 +197,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 break;
+            case R.id.action_toggle_scanned_area:
+                this.toggleScannedArea.toggle();
+                break;
+
         }
 
         return super.onOptionsItemSelected(item);

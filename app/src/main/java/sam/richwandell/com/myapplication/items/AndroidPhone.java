@@ -41,6 +41,7 @@ public class AndroidPhone extends RelativeLayout implements SensorEventListener 
     int width = 0;
 
     ImageView iv;
+    private float density;
 
     public void setMain(MainActivity main){
         this.main = main;
@@ -49,6 +50,7 @@ public class AndroidPhone extends RelativeLayout implements SensorEventListener 
         main.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         height = displayMetrics.heightPixels;
         width = displayMetrics.widthPixels;
+        this.density = displayMetrics.density;
         iv = (ImageView)findViewById(R.id.android_phone_image);
     }
 
@@ -112,8 +114,8 @@ public class AndroidPhone extends RelativeLayout implements SensorEventListener 
         int phoneHeight = height / 20;
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(phoneWidth, phoneHeight);
 
-        params.leftMargin = width / 2;
-        params.topMargin = height / 2;
+        params.leftMargin = (int) (RV.floorPlanWidth * density);
+        params.topMargin = (int) (RV.floorPlanHeight * density);
         iv.setLayoutParams(params);
     }
 

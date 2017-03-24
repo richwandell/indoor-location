@@ -11,6 +11,7 @@ import java.io.IOException;
 public class HomeLayout extends WebView {
 
 
+    private MainActivity main;
 
     public HomeLayout(Context context) {
         super(context);
@@ -32,6 +33,11 @@ public class HomeLayout extends WebView {
         init();
     }
 
+    public void setMain(MainActivity main){
+
+        this.main = main;
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     private void init() {
         if (!this.isInEditMode()) {
@@ -44,7 +50,7 @@ public class HomeLayout extends WebView {
             getSettings().setDisplayZoomControls(false);
             getSettings().setJavaScriptEnabled(true);
             this.addJavascriptInterface(
-                    new WebAppInterface(this, getContext()),
+                    new WebAppInterface(this, main),
                     "Android"
             );
             loadUrl("file:///android_asset/builder.html");

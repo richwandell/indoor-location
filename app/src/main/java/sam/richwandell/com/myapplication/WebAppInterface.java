@@ -17,12 +17,22 @@ class WebAppInterface {
 
     private WebView wView;
 
-    private Context context;
+    private MainActivity main;
 
     /** Instantiate the interface and set the context */
-    WebAppInterface(WebView c, Context con) {
+    WebAppInterface(WebView c, MainActivity main) {
         wView = c;
-        context = con;
+        this.main = main;
+    }
+
+    @JavascriptInterface
+    public void setCurrentSize(String width, String height){
+        Log.d(TAG, "Size: " + width + " " + height);
+        int w = Integer.parseInt(width);
+        int h = Integer.parseInt(height);
+        RV.floorPlanWidth = w;
+        RV.floorPlanHeight = h;
+
     }
 
     @JavascriptInterface

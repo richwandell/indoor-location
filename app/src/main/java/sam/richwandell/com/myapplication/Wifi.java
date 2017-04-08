@@ -31,7 +31,7 @@ public class Wifi {
 
     private WifiManager mWifiManager;
 
-    private final int numScans = 10;
+    private final int numScans = 4;
 
     private int scanNumber;
 
@@ -40,7 +40,10 @@ public class Wifi {
     private HashMap<String, ILocationKalman> locationKalmanMap;
 
     private MainActivity main;
+
     private LocalizationFinishedListener listener;
+
+    private RV.MODE mode;
 
     private final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
         @Override
@@ -68,7 +71,7 @@ public class Wifi {
                     progress.setMessage("Scanning Location " + Integer.toString(numScans - scanNumber) + "/" + numScans);
                     mWifiManager.startScan();
                 }else{
-                    if(RV.mode == RV.MODE.FINGERPRINTING) {
+                    if(mode == RV.MODE.FINGERPRINTING) {
                         finishScan();
                     }else{
                         finishLocalizing();
@@ -86,6 +89,7 @@ public class Wifi {
     public void runLocalizer(LocalizationFinishedListener listener){
         this.listener = listener;
         RV.mode = RV.MODE.LOCALIZING;
+        this.mode = RV.mode;
         if(scanEnabled && RV.floorPlanId != null){
             scanEnabled = false;
             scanNumber = 0;
@@ -103,6 +107,7 @@ public class Wifi {
 
     public void runScan() {
         RV.mode = RV.MODE.FINGERPRINTING;
+        this.mode = RV.mode;
         if(scanEnabled && RV.floorPlanId != null){
             scanNumber = numScans;
             progress = new ProgressDialog(main);
@@ -146,6 +151,8 @@ public class Wifi {
                 aps.put(ap);
             }
             json.put("ap_ids", aps);
+            json.put("device_id", RV.DEVICE_ID);
+            json.put("type", "PHONE");
             listener.onWifiLocalizationFinished(json);
         } catch (JSONException e) {
             e.printStackTrace();

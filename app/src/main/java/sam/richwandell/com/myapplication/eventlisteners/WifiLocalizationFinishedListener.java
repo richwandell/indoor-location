@@ -36,6 +36,7 @@ public class WifiLocalizationFinishedListener implements LocalizationFinishedLis
             String url = endPoint + "localize";
             Log.d(TAG, url);
 
+
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, url, wifiResult,
                 new Response.Listener<JSONObject>() {
 
@@ -43,26 +44,13 @@ public class WifiLocalizationFinishedListener implements LocalizationFinishedLis
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, response.toString());
                         try {
-                            JSONArray clusters = response.getJSONArray("clusters");
+                            JSONArray guess = response.getJSONArray("guess");
 
-                            int largest = 0;
-                            int largestTmp = -1;
-
-                            for(int i = 0; i < clusters.length(); i++){
-                                JSONArray clu = clusters.getJSONArray(i);
-                                if(clu.length() > largestTmp){
-                                    largest = i;
-                                    largestTmp = clu.length();
-                                }
-                            }
-
-                            JSONArray centroids = response.getJSONArray("centroids");
-                            JSONArray center = centroids.getJSONArray(largest);
-
-                            int x = center.getInt(0);
-                            int y = center.getInt(1);
+                            int x = guess.getInt(0);
+                            int y = guess.getInt(1);
                             main.homeLayoutImageContainer
                                 .loadUrl("javascript:clickCanvas('" + Integer.toString(x) + "', '" + Integer.toString(y) + "')");
+                            main.toggleScannedArea.getScannedArea();
 
                         } catch (JSONException e) {
                             e.printStackTrace();

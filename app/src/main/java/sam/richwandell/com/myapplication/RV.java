@@ -1,5 +1,6 @@
 package sam.richwandell.com.myapplication;
 
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
 import java.util.ArrayList;
@@ -16,7 +17,10 @@ import sam.richwandell.com.myapplication.upnp.UPnP;
  */
 public class RV {
 
+    public static String DEVICE_ID;
     public static String TAG = "rdebug";
+
+
 
     public static MODE mode;
     public static FloorPlan[] allFloorplans;

@@ -9,6 +9,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -88,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        RV.DEVICE_ID = Settings.Secure.getString(getContentResolver(),
+            Settings.Secure.ANDROID_ID);
 
         //set up our toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -1,21 +1,17 @@
 package sam.richwandell.com.myapplication.items;
 
-import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import sam.richwandell.com.myapplication.MainActivity;
-import sam.richwandell.com.myapplication.R;
 import sam.richwandell.com.myapplication.RV;
 import sam.richwandell.com.myapplication.Wifi;
 import sam.richwandell.com.myapplication.db.FloorPlan;
@@ -24,7 +20,7 @@ import sam.richwandell.com.myapplication.eventlisteners.WifiLocalizationFinished
 import static sam.richwandell.com.myapplication.RV.TAG;
 
 
-public class AndroidPhone extends RelativeLayout implements SensorEventListener {
+public class AndroidPhone implements SensorEventListener {
 
     float[] accelValues;
     float[] magnetValues;
@@ -51,19 +47,6 @@ public class AndroidPhone extends RelativeLayout implements SensorEventListener 
         height = displayMetrics.heightPixels;
         width = displayMetrics.widthPixels;
         this.density = displayMetrics.density;
-        iv = (ImageView)findViewById(R.id.android_phone_image);
-    }
-
-    public AndroidPhone(Context context) {
-        super(context);
-    }
-
-    public AndroidPhone(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public AndroidPhone(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
     }
 
     public float getCurrentDegree(){

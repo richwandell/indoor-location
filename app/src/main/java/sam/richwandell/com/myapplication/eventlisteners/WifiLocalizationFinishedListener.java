@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import sam.richwandell.com.myapplication.MainActivity;
 import sam.richwandell.com.myapplication.RV;
+import sam.richwandell.com.myapplication.Wifi;
 
 import static sam.richwandell.com.myapplication.RV.TAG;
 
@@ -51,6 +52,9 @@ public class WifiLocalizationFinishedListener implements LocalizationFinishedLis
                             main.homeLayoutImageContainer
                                 .loadUrl("javascript:clickCanvas('" + Integer.toString(x) + "', '" + Integer.toString(y) + "')");
                             main.toggleScannedArea.getScannedArea();
+                            if(RV.mode == RV.MODE.LOCALIZING) {
+                                new Wifi(main).runLocalizer(new WifiLocalizationFinishedListener(main));
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();

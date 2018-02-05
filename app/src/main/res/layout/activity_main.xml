@@ -30,6 +30,4 @@
 
     <include layout="@layout/fanmenu" />
 
-    <include layout="@layout/android_phone" />
-
 </android.support.design.widget.CoordinatorLayout>

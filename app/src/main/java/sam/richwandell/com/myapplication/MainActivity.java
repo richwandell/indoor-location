@@ -2,7 +2,9 @@ package sam.richwandell.com.myapplication;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.hardware.Sensor;
@@ -22,15 +24,14 @@ import android.view.MotionEvent;
 
 import sam.richwandell.com.myapplication.db.FloorPlan;
 import sam.richwandell.com.myapplication.eventlisteners.FingerPrintClickListener;
-import sam.richwandell.com.myapplication.eventlisteners.MovementSensorEventListener;
 import sam.richwandell.com.myapplication.eventlisteners.SyncButtonClickListener;
 import sam.richwandell.com.myapplication.eventlisteners.ToggleScannedArea;
 import sam.richwandell.com.myapplication.eventlisteners.TrackChangesButtonClickListener;
-import sam.richwandell.com.myapplication.items.AndroidPhone;
 import sam.richwandell.com.myapplication.items.Compass;
 import sam.richwandell.com.myapplication.items.FanMenu;
 import sam.richwandell.com.myapplication.upnp.UPnP;
 import sam.richwandell.com.myapplication.upnp.UPnPListener;
+
 import static sam.richwandell.com.myapplication.RV.TAG;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,11 +42,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSIONS_REQUEST_CODE_ACCESS_FINE_LOCATION = 12345;
 
+    private static final int GET_NEW_SERVER_RESULT = 12344;
+
     //Sensors
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private Sensor magneticfield;
-    private Sensor stepSensor;
 
     //Floating Action Buttons
     private FloatingActionButton fingerPrintButton;
@@ -54,11 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     private Compass compass;
-    private AndroidPhone androidPhone;
 
     private FloorPlan selectedFloorPlan;
     private int yPos;
     private int xPos;
+
+    UPnP upnp;
 
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
@@ -99,19 +102,13 @@ public class MainActivity extends AppCompatActivity {
 
         //set up the sensor event listener
         this.compass = (Compass)findViewById(R.id.compasscontainer);
-        this.androidPhone = (AndroidPhone)findViewById(R.id.android_phone_container);
-        this.androidPhone.setMain(this);
         this.sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         this.magneticfield = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         this.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        this.stepSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
 
         this.sensorManager.registerListener(this.compass, this.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
         this.sensorManager.registerListener(this.compass, this.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        this.sensorManager.registerListener(this.androidPhone, this.magneticfield, SensorManager.SENSOR_DELAY_FASTEST);
-        this.sensorManager.registerListener(this.androidPhone, this.accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
-        this.sensorManager.registerListener(this.androidPhone, this.stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
 
         this.homeLayoutImageContainer = (HomeLayout)findViewById(R.id.homelayoutcontainer);
 
@@ -152,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     private void upnpDiscover(){
         final MainActivity main = this;
 
-        final UPnP upnp = new UPnP(this, new UPnPListener() {
+        upnp = new UPnP(this, new UPnPListener() {
 
             @Override
             public void onDiscover(UPnP.HeaderParser.UPnPDevice device) {
@@ -192,22 +189,58 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i;
+
         switch(item.getItemId()){
             case R.id.action_load_floorplan:
                 RV.showTrackerServerSelection(this);
                 break;
 
             case R.id.action_settings:
-                Intent i = new Intent(this, SettingsActivity.class);
+                i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 break;
+
             case R.id.action_toggle_scanned_area:
                 this.toggleScannedArea.toggle();
                 break;
 
+            case R.id.action_set_server:
+                SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+                String ip = "";
+                String port = "";
+                if(sharedPref.contains(CreateServerActivity.NEW_SERVER_IP)){
+                    ip = sharedPref.getString(CreateServerActivity.NEW_SERVER_IP, "");
+                }
+                if(sharedPref.contains(CreateServerActivity.NEW_SERVER_PORT)){
+                    port = sharedPref.getString(CreateServerActivity.NEW_SERVER_PORT, "");
+                }
+                i = new Intent(this, CreateServerActivity.class);
+                i.putExtra(CreateServerActivity.NEW_SERVER_IP, ip);
+                i.putExtra(CreateServerActivity.NEW_SERVER_PORT, port);
+                startActivityForResult(i, GET_NEW_SERVER_RESULT);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult");
+        if(resultCode == RESULT_OK) {
+            String serverIp = data.getStringExtra(CreateServerActivity.NEW_SERVER_IP);
+            String serverPort = data.getStringExtra(CreateServerActivity.NEW_SERVER_PORT);
+
+            String headers = "200/OK\r\nLOCATION:http://"+serverIp+":"+serverPort + "/devicedescription.xml";
+            upnp.add(headers);
+
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(CreateServerActivity.NEW_SERVER_IP, serverIp);
+            editor.putString(CreateServerActivity.NEW_SERVER_PORT, serverPort);
+            editor.apply();
+        }
     }
 
     @Override
@@ -215,15 +248,11 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         this.sensorManager.registerListener(this.compass, this.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
         this.sensorManager.registerListener(this.compass, this.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        this.sensorManager.registerListener(this.androidPhone, this.magneticfield, SensorManager.SENSOR_DELAY_FASTEST);
-        this.sensorManager.registerListener(this.androidPhone, this.accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
-        this.sensorManager.registerListener(this.androidPhone, this.stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         this.sensorManager.unregisterListener(this.compass);
-        this.sensorManager.unregisterListener(this.androidPhone);
     }
 }

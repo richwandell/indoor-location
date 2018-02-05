@@ -1,7 +1,5 @@
 package sam.richwandell.com.myapplication;
 
-import android.util.Log;
-
 import org.apache.commons.math3.filter.DefaultMeasurementModel;
 import org.apache.commons.math3.filter.DefaultProcessModel;
 import org.apache.commons.math3.filter.KalmanFilter;
@@ -60,9 +58,6 @@ public class ILocationKalman {
         MeasurementModel mm = new DefaultMeasurementModel(H, R);
 
         filter = new KalmanFilter(pm, mm);
-
-        pNoise = new ArrayRealVector(1);
-        mNoise = new ArrayRealVector(1);
     }
 
     public void addSample(double sample){
@@ -70,17 +65,11 @@ public class ILocationKalman {
         currentReading++;
         filter.predict();
 
-        // simulate the process
-        pNoise.setEntry(0, processNoise * sample);
-
         // x = A * x + p_noise
-        x = A.operate(new ArrayRealVector(new double[]{sample})).add(pNoise);
-
-        // simulate the measurement
-        mNoise.setEntry(0, measurementNoise * sample);
+        x = A.operate(new ArrayRealVector(new double[]{sample}));
 
         // z = H * x + m_noise
-        RealVector z = H.operate(x).add(mNoise);
+        RealVector z = H.operate(x);
 
         filter.correct(z);
     }

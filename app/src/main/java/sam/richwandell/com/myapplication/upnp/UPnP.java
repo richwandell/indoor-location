@@ -27,7 +27,6 @@ import java.io.StringReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -36,6 +35,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import sam.richwandell.com.myapplication.db.FloorPlan;
 import sam.richwandell.com.myapplication.eventlisteners.FloorPlanReceiver;
+
 import static sam.richwandell.com.myapplication.RV.TAG;
 
 
@@ -58,6 +58,11 @@ public class UPnP {
 
     public void registerListener(UPnPListener listener){
         this.listener = listener;
+    }
+
+    public void add(String headers) {
+        String[] s = headers.split("\r\n");
+        HeaderParser hp = new HeaderParser(s);
     }
 
     public void discover(){

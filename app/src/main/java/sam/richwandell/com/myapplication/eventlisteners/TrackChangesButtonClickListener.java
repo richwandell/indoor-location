@@ -2,27 +2,12 @@ package sam.richwandell.com.myapplication.eventlisteners;
 
 import android.content.res.ColorStateList;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import sam.richwandell.com.myapplication.MainActivity;
 import sam.richwandell.com.myapplication.R;
 import sam.richwandell.com.myapplication.RV;
 import sam.richwandell.com.myapplication.Wifi;
-
-
-import static sam.richwandell.com.myapplication.RV.TAG;
 
 public class TrackChangesButtonClickListener implements View.OnClickListener {
 
@@ -35,11 +20,16 @@ public class TrackChangesButtonClickListener implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         main.resetFabColors();
-        RV.mode = RV.MODE.LOCALIZING;
-
-        int color = ContextCompat.getColor(view.getContext(), R.color.color3);
-        view.setBackgroundTintList(ColorStateList.valueOf(color));
-        new Wifi(main).runLocalizer(new WifiLocalizationFinishedListener(main));
+        if(RV.mode == RV.MODE.LOCALIZING) {
+            RV.mode = RV.MODE.FINGERPRINTING;
+            int color = ContextCompat.getColor(view.getContext(), R.color.colorPrimary);
+            view.setBackgroundTintList(ColorStateList.valueOf(color));
+        } else {
+            RV.mode = RV.MODE.LOCALIZING;
+            int color = ContextCompat.getColor(view.getContext(), R.color.color3);
+            view.setBackgroundTintList(ColorStateList.valueOf(color));
+            new Wifi(main).runLocalizer(new WifiLocalizationFinishedListener(main));
+        }
     }
 
 

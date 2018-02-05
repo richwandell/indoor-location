@@ -97,7 +97,7 @@ public class Wifi {
             locationKalmanMap = new HashMap<>();
             main.registerReceiver(mWifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 
-            mWifiManager = (WifiManager) main.getSystemService(Context.WIFI_SERVICE);
+            mWifiManager = (WifiManager) main.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             mWifiManager.startScan();
         }else if(RV.floorPlanId == null){
             RV.showTrackerServerSelection(main);
@@ -125,7 +125,7 @@ public class Wifi {
             locationKalmanMap = new HashMap<>();
             main.registerReceiver(mWifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 
-            mWifiManager = (WifiManager) main.getSystemService(Context.WIFI_SERVICE);
+            mWifiManager = (WifiManager) main.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             mWifiManager.startScan();
             scanEnabled = false;
             main.fm.toggleMenuItems();

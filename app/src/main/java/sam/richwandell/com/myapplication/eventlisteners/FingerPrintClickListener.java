@@ -1,7 +1,6 @@
 package sam.richwandell.com.myapplication.eventlisteners;
 
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
@@ -23,6 +22,8 @@ public class FingerPrintClickListener implements View.OnClickListener {
     public void onClick(View view) {
         main.resetFabColors();
         RV.mode = RV.MODE.FINGERPRINTING;
+        main.homeLayoutImageContainer
+                .loadUrl("javascript:setMode('FINGERPRINTING');");
         int color = ContextCompat.getColor(view.getContext(), R.color.color3);
         view.setBackgroundTintList(ColorStateList.valueOf(color));
         new Wifi(main).runScan();

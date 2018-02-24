@@ -9,6 +9,7 @@
     <ImageView
         android:layout_height="wrap_content"
         android:id="@+id/android_phone_image"
+        android:layout_centerInParent="true"
         app:srcCompat="@drawable/ic_phone_android_black_24dp"
         android:layout_width="wrap_content"/>
 

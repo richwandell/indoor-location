@@ -27,6 +27,7 @@ import sam.richwandell.com.myapplication.eventlisteners.FingerPrintClickListener
 import sam.richwandell.com.myapplication.eventlisteners.SyncButtonClickListener;
 import sam.richwandell.com.myapplication.eventlisteners.ToggleScannedArea;
 import sam.richwandell.com.myapplication.eventlisteners.TrackChangesButtonClickListener;
+import sam.richwandell.com.myapplication.items.AndroidPhone;
 import sam.richwandell.com.myapplication.items.Compass;
 import sam.richwandell.com.myapplication.items.FanMenu;
 import sam.richwandell.com.myapplication.upnp.UPnP;
@@ -56,12 +57,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     private Compass compass;
+    private AndroidPhone androidPhone;
 
     private FloorPlan selectedFloorPlan;
     private int yPos;
     private int xPos;
 
     UPnP upnp;
+    private Sensor linearAccelerationSensor;
+    private Sensor gravitySensor;
 
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
@@ -102,13 +106,20 @@ public class MainActivity extends AppCompatActivity {
 
         //set up the sensor event listener
         this.compass = (Compass)findViewById(R.id.compasscontainer);
+        this.androidPhone = new AndroidPhone(this);
         this.sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         this.magneticfield = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         this.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.linearAccelerationSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        this.gravitySensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
 
         this.sensorManager.registerListener(this.compass, this.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
         this.sensorManager.registerListener(this.compass, this.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.androidPhone, this.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.androidPhone, this.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.androidPhone, this.linearAccelerationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.androidPhone, this.gravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         this.homeLayoutImageContainer = (HomeLayout)findViewById(R.id.homelayoutcontainer);
 
@@ -248,11 +259,15 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         this.sensorManager.registerListener(this.compass, this.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
         this.sensorManager.registerListener(this.compass, this.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.androidPhone, this.magneticfield, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.androidPhone, this.linearAccelerationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this.androidPhone, this.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         this.sensorManager.unregisterListener(this.compass);
+        this.sensorManager.unregisterListener(this.androidPhone);
     }
 }

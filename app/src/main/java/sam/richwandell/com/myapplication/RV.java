@@ -1,10 +1,8 @@
 package sam.richwandell.com.myapplication;
 
-import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import sam.richwandell.com.myapplication.db.FloorPlan;
@@ -20,7 +18,7 @@ public class RV {
     public static String DEVICE_ID;
     public static String TAG = "rdebug";
 
-
+    public static float phoneRotation = 0.0f;
 
     public static MODE mode;
     public static FloorPlan[] allFloorplans;

@@ -3,12 +3,9 @@ package sam.richwandell.com.myapplication;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
-
-import java.io.IOException;
 
 public class HomeLayout extends WebView {
 
@@ -45,11 +42,7 @@ public class HomeLayout extends WebView {
         this.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(RV.mode == RV.MODE.LOCALIZING){
-                    RV.mode = RV.MODE.FINGERPRINTING;
-                }
                 return false;
-//                return RV.mode == RV.MODE.LOCALIZING;
             }
         });
 

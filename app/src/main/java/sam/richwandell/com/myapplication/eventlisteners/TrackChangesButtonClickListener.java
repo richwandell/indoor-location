@@ -21,11 +21,15 @@ public class TrackChangesButtonClickListener implements View.OnClickListener {
     public void onClick(View view) {
         main.resetFabColors();
         if(RV.mode == RV.MODE.LOCALIZING) {
+            main.homeLayoutImageContainer
+                    .loadUrl("javascript:setMode('FINGERPRINTING');");
             RV.mode = RV.MODE.FINGERPRINTING;
             int color = ContextCompat.getColor(view.getContext(), R.color.colorPrimary);
             view.setBackgroundTintList(ColorStateList.valueOf(color));
         } else {
             RV.mode = RV.MODE.LOCALIZING;
+            main.homeLayoutImageContainer
+                    .loadUrl("javascript:setMode('LOCALIZING');");
             int color = ContextCompat.getColor(view.getContext(), R.color.color3);
             view.setBackgroundTintList(ColorStateList.valueOf(color));
             new Wifi(main).runLocalizer(new WifiLocalizationFinishedListener(main));

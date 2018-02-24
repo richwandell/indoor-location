@@ -47,11 +47,16 @@ public class WifiLocalizationFinishedListener implements LocalizationFinishedLis
                         try {
                             JSONArray guess = response.getJSONArray("guess");
 
+
                             int x = guess.getInt(0);
                             int y = guess.getInt(1);
+                            String id = response.getString("id");
                             main.homeLayoutImageContainer
-                                .loadUrl("javascript:clickCanvas('" + Integer.toString(x) + "', '" + Integer.toString(y) + "')");
-                            main.toggleScannedArea.getScannedArea();
+                                .loadUrl("javascript:setLocalizationResult(" +
+                                        "'" + Integer.toString(x) + "', " +
+                                        "'" + Integer.toString(y) + "'," +
+                                        "'" + id + "'" +
+                                        ")");
                             if(RV.mode == RV.MODE.LOCALIZING) {
                                 new Wifi(main).runLocalizer(new WifiLocalizationFinishedListener(main));
                             }

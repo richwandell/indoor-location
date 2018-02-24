@@ -77,8 +77,20 @@
                     </div>
 
                     <div class="form-group form-group-sm">
-                        <div class="col-sm-9">
-                            <button class="btn btn-default btn-xs" id="toggle_scanned_area">Toggle Scanned Area</button>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default btn-xs" id="toggle_scanned_area">Scanned Area</button>
+                        </div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default btn-xs" id="toggle_weights">Weights</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-group-sm">
+                        <div class="col-sm-4">
+                            <button class="btn btn-default btn-xs" id="toggle_lines">Lines</button>
+                        </div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default btn-xs" id="toggle_particles">Particles</button>
                         </div>
                     </div>
 
@@ -136,7 +148,18 @@
     </div>
     <div style="clear: both;"></div>
 </body>
-
+<script>
+    if (typeof(require) === "function") {
+        var GLOBAL_NW = require('nw');
+        var GLOBAL_NW_GUI = require('nw.gui');
+        var GLOBAL_SCANNER = require('node-wifi-scanner');
+//        var GLOBAL_UUID = require('uuid');
+//        var GLOBAL_FS = require('fs');
+    } else {
+        var GLOBAL_NW = false;
+        var GLOBAL_NW_GUI = false;
+    }
+</script>
 
 <script src="lib/js/md5.min.js"></script>
 <script src="app.js"></script>

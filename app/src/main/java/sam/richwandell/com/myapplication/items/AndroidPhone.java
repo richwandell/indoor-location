@@ -6,10 +6,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import sam.richwandell.com.myapplication.MainActivity;
 import sam.richwandell.com.myapplication.RV;
@@ -38,8 +35,10 @@ public class AndroidPhone implements SensorEventListener {
 
     ImageView iv;
     private float density;
+    private float[] gravityValues;
+    private boolean gravityValuesSet = false;
 
-    public void setMain(MainActivity main){
+    public AndroidPhone(MainActivity main){
         this.main = main;
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -89,18 +88,39 @@ public class AndroidPhone implements SensorEventListener {
         accelValues = sensorEvent.values;
         accelValuesSet = true;
         updateCurrentRotation(sensorEvent);
-        updateCurrentLocation();
     }
 
-    public void updateCurrentLocation(){
-        int phoneWidth = width / 10;
-        int phoneHeight = height / 20;
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(phoneWidth, phoneHeight);
+    public void linearAccelChanged(SensorEvent sensorEvent){
 
-        params.leftMargin = (int) (RV.floorPlanWidth * density);
-        params.topMargin = (int) (RV.floorPlanHeight * density);
-        iv.setLayoutParams(params);
+        if(gravityValuesSet && magnetValuesSet && false) {
+            float[] deviceRelativeAcceleration = new float[4];
+            deviceRelativeAcceleration[0] = sensorEvent.values[0];
+            deviceRelativeAcceleration[1] = sensorEvent.values[1];
+            deviceRelativeAcceleration[2] = sensorEvent.values[2];
+            deviceRelativeAcceleration[3] = 0;
+
+            float[] R = new float[16];
+            float[] I = new float[16];
+            SensorManager.getRotationMatrix(R, I, gravityValues, magnetValues);
+
+            float[] inv = new float[16];
+            android.opengl.Matrix.invertM(inv, 0, R, 0);
+
+            float[] earthAcc = new float[16];
+            android.opengl.Matrix.multiplyMV(earthAcc, 0, inv, 0, deviceRelativeAcceleration, 0);
+
+            Log.d(TAG, "Values: (" +
+                    Float.toString(earthAcc[0]) +
+                    ", " + Float.toString(earthAcc[1]) +
+                    ", " + Float.toString(earthAcc[2]) + ")");
+        }
     }
+
+    public void gravityChanged(SensorEvent sensorEvent){
+        gravityValues = sensorEvent.values;
+        gravityValuesSet = true;
+    }
+
 
     public void updateCurrentRotation(SensorEvent sensorEvent){
         FloorPlan fp = main.getSelectedFloorPlan();
@@ -115,22 +135,9 @@ public class AndroidPhone implements SensorEventListener {
             float azimuthInRadians = orientationMatrix[0];
             float azimuthInDegrees = (float)(Math.toDegrees(azimuthInRadians)+360)%360;
 
-            float rotation = (180 + azimuthInDegrees + extraRotation) % 360;
-
-            RotateAnimation ra = new RotateAnimation(
-                    currentDegree,
-                    rotation,
-                    Animation.RELATIVE_TO_SELF,
-                    0.5f,
-                    Animation.RELATIVE_TO_SELF,
-                    0.5f
-            );
-
-            ra.setDuration(250);
-            ra.setFillAfter(true);
-            iv.startAnimation(ra);
-
-            currentDegree = rotation;
+            currentDegree = (180 + azimuthInDegrees + extraRotation) % 360;
+            main.homeLayoutImageContainer
+                    .loadUrl("javascript:setPhoneRotation('" + Float.toString(currentDegree) + "')");
         }
     }
 
@@ -140,11 +147,21 @@ public class AndroidPhone implements SensorEventListener {
             case Sensor.TYPE_STEP_DETECTOR:
                 stepSensorChanged(sensorEvent);
                 break;
+
             case Sensor.TYPE_MAGNETIC_FIELD:
                 magnetChanged(sensorEvent);
                 break;
+
             case Sensor.TYPE_ACCELEROMETER:
                 accelChanged(sensorEvent);
+                break;
+
+            case Sensor.TYPE_LINEAR_ACCELERATION:
+                linearAccelChanged(sensorEvent);
+                break;
+
+            case Sensor.TYPE_GRAVITY:
+                gravityChanged(sensorEvent);
                 break;
         }
     }
